@@ -1,0 +1,594 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jadwal Petugas Ibadah - GKPI Tarakan (Juni-Agustus 2026)</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-dark: #333333;
+            --text-light: #7f8c8d;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            padding-bottom: 30px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1a252f);
+            color: white;
+            padding: 20px 15px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        header h2 {
+            font-size: 1.0rem;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-around;
+            background: var(--card-bg);
+            margin: 15px;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 10px 5px;
+            border: none;
+            background: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .nav-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+        }
+
+        .search-container {
+            margin: 0 15px 15px 15px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            outline: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .view-toggle {
+            display: flex;
+            justify-content: flex-end;
+            margin: 0 15px 10px 15px;
+            gap: 10px;
+        }
+
+        .toggle-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .toggle-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .date-container {
+            margin: 0 15px 15px 15px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 5px;
+        }
+
+        .date-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .date-card {
+            flex: 0 0 auto;
+            background: var(--card-bg);
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            min-width: 110px;
+            cursor: pointer;
+        }
+
+        .date-card.active {
+            border-color: var(--accent-color);
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .date-card .day {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .date-card .time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        .content-section {
+            display: none;
+            padding: 0 15px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* List View (Default Mobile Optimized) */
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .item-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .item-role {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .item-names {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            line-height: 1.4;
+        }
+
+        /* Table View (Original Excel Replica) */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+            display: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 10px;
+            font-weight: 600;
+            white-space: pre-line;
+            vertical-align: top;
+            border: 1px solid #34495e;
+            min-width: 150px;
+        }
+
+        th:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #1a252f;
+            z-index: 2;
+            min-width: 140px;
+        }
+
+        td {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            vertical-align: top;
+            color: var(--text-dark);
+            background-color: white;
+        }
+
+        td:first-child {
+            position: sticky;
+            left: 0;
+            background-color: #f8fafc;
+            font-weight: bold;
+            color: var(--primary-color);
+            z-index: 1;
+            border-right: 2px solid var(--border-color);
+        }
+
+        tr:nth-child(even) td {
+            background-color: #fdfdfd;
+        }
+        
+        tr:nth-child(even) td:first-child {
+            background-color: #f1f5f9;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-light);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 id="main-title">JADWAL PETUGAS IBADAH MINGGU</h1>
+        <h2 id="sub-title">GKPI Jemaat Tarakan</h2>
+    </header>
+
+    <div class="nav-container">
+        <button class="nav-btn active" onclick="switchMonth('juni')">Juni 2026</button>
+        <button class="nav-btn" onclick="switchMonth('juli')">Juli 2026</button>
+        <button class="nav-btn" onclick="switchMonth('agustus')">Agustus 2026</button>
+    </div>
+
+    <div class="search-container">
+        <input type="text" class="search-input" id="searchBar" placeholder="Cari nama petugas (contoh: Ari Hepi)..." oninput="handleSearch()">
+    </div>
+
+    <div class="view-toggle">
+        <button class="toggle-btn active" id="btn-list" onclick="setViewMode('list')">Tampilan Kartu</button>
+        <button class="toggle-btn" id="btn-table" onclick="setViewMode('table')">Tampilan Tabel Excel</button>
+    </div>
+
+    <div class="date-container" id="dateTabs">
+        </div>
+
+    <div id="juni" class="content-section active"></div>
+    <div id="juli" class="content-section"></div>
+    <div id="agustus" class="content-section"></div>
+
+    <script>
+        const data = {
+            "juni": {
+                "title": "JADWAL PETUGAS IBADAH MINGGU",
+                "month": "Bulan Juni 2026",
+                "church": "GKPI Jemaat Tarakan",
+                "headers": [
+                    "07 Juni 2026\n(Minggu ke-1)\n09:30 WITA",
+                    "14 Juni 2026\n(Minggu ke-2)\n09:30 WITA",
+                    "21 Juni 2026\n(Minggu ke-3)\n09:30 WITA",
+                    "28 Juni 2026\n(Minggu ke-4)\n09:30 WITA"
+                ],
+                "rows": [
+                    {"category": "Pelayan Firman", "is_subrow": false, "values": ["Pdt. Ari Hepi Sari, S.Th", "Pdt. Ari Hepi Sari, S.Th", "Pdt. Ari Hepi Sari, S.Th", "Pdt. Kristina Natalia, S.Th"]},
+                    {"category": "Pembawa Acara (P1)", "is_subrow": false, "values": ["Dkn. Renate", "Pnt. Quinsi Rohani", "Pnt. Dalela J. Padan", "Pnt. Yohana Sriwahyuni"]},
+                    {"category": "Liturgos (P2)", "is_subrow": false, "values": ["Dkn. Alexandra Johen", "Dkn. Andre Christian", "Dkn. Siska Trivosa", "Dkn. Jefli Galih"]},
+                    {"category": "Persembahan Syukur (P3)", "is_subrow": false, "values": ["Dkn. Juni Alson", "Pnt. Yohana Sriwahyuni", "Pnt. Angel", "Pnt. Yunus Kristanto"]},
+                    {"category": "Kolektan", "is_subrow": false, "values": ["Pnt. Helse Marlinda", "Dkn. Dobbie Steven", "Dkn. Juni Alson", "Dkn. Andre Christian"]},
+                    {"category": "Kolektan", "is_subrow": true, "values": ["Pnt. Angel", "Dkn. Jefli Galih", "Dkn. Alexandra Johen", "Dkn. Penina"]},
+                    {"category": "Kolektan", "is_subrow": true, "values": ["Pnt. Dolliana Nuro", "Dkn. Julia Elsie", "Dkn. Renate", "Pnt. Fenny"]},
+                    {"category": "Penerima & Penghitung Jemaat", "is_subrow": false, "values": ["Pnt. Yunus Kristanto", "Dkn. Penina", "Pnt. Helse Marlinda", "Dkn. Dobbie Steven"]},
+                    {"category": "Penerima & Penghitung Jemaat", "is_subrow": true, "values": ["Pnt. Dalela J. Padan", "Pnt. Joksin Takalawesang", "Pnt. Juari Cander", "Dkn. Julia Elsie"]},
+                    {"category": "Singer", "is_subrow": false, "values": ["PKPrJ (Kaum Ibu)", "PKBJ (Kaum Bapak)", "PKPJ (Pemuda)", "PKLJ (Lansia)"]},
+                    {"category": "Singer", "is_subrow": true, "values": ["PKPrJ (Kaum Ibu)", "PKBJ (Kaum Bapak)", "PKPJ (Pemuda)", "PKLJ (Lansia)"]},
+                    {"category": "Pemain Musik", "is_subrow": false, "values": ["Sdra. Wisno", "Sdra. Anton", "Sdra. Wisno", "Sdra. Anton"]},
+                    {"category": "Operator LCD", "is_subrow": false, "values": ["Sdri. Marshanda", "Sdra. Yawar", "Sdri. Wenni", "Sdra. Yawar"]}
+                ]
+            },
+            "juli": {
+                "title": "JADWAL PETUGAS IBADAH MINGGU",
+                "month": "Bulan Juli 2026",
+                "church": "GKPI Jemaat Tarakan",
+                "headers": [
+                    "05 Juli 2026\n(Minggu ke-1)\n09:30 WITA",
+                    "12 Juli 2026\n(Minggu ke-2)\n09:30 WITA",
+                    "19 Juli 2026\n(Minggu ke-3)\n09:30 WITA",
+                    "26 Juli 2026\n(Minggu ke-4)\n09:30 WITA"
+                ],
+                "rows": [
+                    {"category": "Pelayan Firman", "is_subrow": false, "values": ["Pdt. Ari Hepi Sari, S.Th", "Pdt. Ari Hepi Sari, S.Th", "Pdt. Herny Omayanti, S.Th", "Pdt. Ari Hepi Sari, S.Th"]},
+                    {"category": "Pembawa Acara (P1)", "is_subrow": false, "values": ["Pnt. Helse Marlinda", "Dkn. Andre Christian", "Pnt. Yunus Kristanto", "Pnt. Joksin Takalawesang"]},
+                    {"category": "Liturgos (P2)", "is_subrow": false, "values": ["Pnt. Quinsi Rohani", "Dkn. Dobbie Steven", "Pnt. Helse Marlinda", "Pnt. Yunus Kristanto"]},
+                    {"category": "Persembahan Syukur (P3)", "is_subrow": false, "values": ["Dkn. Alexandra Johen", "Pnt. Fenny", "Dkn. Julia Elsie", "Pnt. Mariani Kewa"]},
+                    {"category": "Kolektan", "is_subrow": false, "values": ["Dkn. Juni Alson", "Pnt. Angel", "Pnt. Dolliana Nuro", "Dkn. Siska Trivosa"]},
+                    {"category": "Kolektan", "is_subrow": true, "values": ["Dkn. Renate", "Dkn. Penina", "Pnt. Mariani Kewa", "Dkn. Dobbie Steven"]},
+                    {"category": "Kolektan", "is_subrow": true, "values": ["Pnt. Ririk Riba Dewa Batu", "Dkn. Siska Trivosa", "Pnt. Yohana Sriwahyuni", "Dkn. Renate"]},
+                    {"category": "Penerima & Penghitung Jemaat", "is_subrow": false, "values": ["Pnt. Juari Cander", "Pnt. Quinsi Rohani", "Dkn. Alexandra Johen", "Pnt. Fenny"]},
+                    {"category": "Penerima & Penghitung Jemaat", "is_subrow": true, "values": ["Pnt. Dolliana Nuro", "Dkn. Juni Alson", "Dkn. Jefli Galih", "Dkn. Andre Christian"]},
+                    {"category": "Singer", "is_subrow": false, "values": ["PKPrJ (Kaum Ibu)", "PKBJ (Kaum Bapak)", "PKLJ (Lansia)", "PKPJ (Pemuda)"]},
+                    {"category": "Singer", "is_subrow": true, "values": ["PKPrJ (Kaum Ibu)", "PKBJ (Kaum Bapak)", "PKLJ (Lansia)", "PKPJ (Pemuda)"]},
+                    {"category": "Pemain Musik", "is_subrow": false, "values": ["Sdra. Wisno", "Sdra. Anton", "Sdra. Wisno", "Sdra. Anton"]},
+                    {"category": "Operator LCD", "is_subrow": false, "values": ["Sdri. Wenni", "Sdri. Marshanda", "Sdra. Yawar", "Sdri. Wenni"]}
+                ]
+            },
+            "agustus": {
+                "title": "JADWAL PETUGAS IBADAH MINGGU",
+                "month": "Bulan Agustus 2026",
+                "church": "GKPI Jemaat Tarakan",
+                "headers": [
+                    "02 Agustus 2026\n(Minggu ke-1)\n09:30 WITA",
+                    "09 Agustus 2026\n(Minggu ke-2)\n09:30 WITA",
+                    "16 Agustus 2026\n(Minggu ke-3)\n09:30 WITA",
+                    "23 Agustus 2026\n(Minggu ke-4)\n09:30 WITA",
+                    "30 Agustus 2026\n(Minggu ke-5)\n09:30 WITA (Kreatif Pagi)",
+                    "30 Agustus 2026\n(Minggu ke-5)\n19:00 WITA (Kreatif Malam)"
+                ],
+                "rows": [
+                    {"category": "Pelayan Firman", "is_subrow": false, "values": ["Pdt. Ari Hepi Sari, S.Th", "Pdt. Ari Hepi Sari, S.Th", "Pdt. Ari Hepi Sari, S.Th", "Pdt. Ari Hepi Sari, S.Th", "Pdt. Kristina Natalia, S.Th", "Pdt. Ari Hepi Sari, S.Th"]},
+                    {"category": "Pembawa Acara (P1)", "is_subrow": false, "values": ["Dkn. Juni Alson", "Dkn. Siska Trivosa", "Dkn. Alexandra Johen", "Dkn. Jefli Galih", "Pnt. Dolliana Nuro", "Dkn. Dobbie Steven"]},
+                    {"category": "Liturgos (P2)", "is_subrow": false, "values": ["Pnt. Angel", "Dkn. Renate", "Dkn. Juni Alson", "Pnt. Dolliana Nuro", "Pnt. Yohana Sriwahyuni", "Pnt. Juari Cander"]},
+                    {"category": "Persembahan Syukur (P3)", "is_subrow": false, "values": ["Pnt. Helse Marlinda", "Dkn. Andre Christian", "Pnt. Ririk Riba Dewa Batu", "Pnt. Joksin Takalawesang", "Pnt. Fenny", "Dkn. Siska Trivosa"]},
+                    {"category": "Kolektan", "is_subrow": false, "values": ["Dkn. Alexandra Johen", "Dkn. Dobbie Steven", "Pnt. Yunus Kristanto", "Pnt. Helse Marlinda", "Pnt. Quinsi Rohani", "Pnt. Joksin Takalawesang"]},
+                    {"category": "Kolektan", "is_subrow": true, "values": ["Pnt. Juari Cander", "Dkn. Penina", "Pnt. Dolliana Nuro", "Dkn. Siska Trivosa", "Pnt. Angel", "Dkn. Alexandra Johen"]},
+                    {"category": "Kolektan", "is_subrow": true, "values": ["Pnt. Yohana Sriwahyuni", "Pnt. Fenny", "Dkn. Julia Elsie", "Dkn. Renate", "Dkn. Julia Elsie", "Pnt. Helse Marlinda"]},
+                    {"category": "Penerima & Penghitung Jemaat", "is_subrow": false, "values": ["Dkn. Jefli Galih", "Pnt. Joksin Takalawesang", "Pnt. Juari Cander", "Dkn. Dobbie Steven", "Dkn. Juni Alson", "Pnt. Andre Christian"]},
+                    {"category": "Penerima & Penghitung Jemaat", "is_subrow": true, "values": ["Pnt. Dolliana Nuro", "Pnt. Mariani Kewa", "Pnt. Quinsi Rohani", "Dkn. Penina", "Pnt. Dalela J. Padan", "Dkn. Renate"]},
+                    {"category": "Singer", "is_subrow": false, "values": ["PKPrJ (Kaum Ibu)", "PKBJ (Kaum Bapak)", "PKPJ (Pemuda)", "PKLJ (Lansia)", "PKPrJ (Kaum Ibu)", "PKPJ (Pemuda)"]},
+                    {"category": "Singer", "is_subrow": true, "values": ["PKPrJ (Kaum Ibu)", "PKBJ (Kaum Bapak)", "PKPJ (Pemuda)", "PKLJ (Lansia)", "PKPrJ (Kaum Ibu)", "PKPJ (Pemuda)"]},
+                    {"category": "Pemain Musik", "is_subrow": false, "values": ["Sdra. Wisno", "Sdra. Anton", "Sdra. Wisno", "Sdra. Anton", "Sdra. Wisno", "Full Band"]},
+                    {"category": "Operator LCD", "is_subrow": false, "values": ["Sdri. Marshanda", "Sdra. Yawar", "Sdri. Wenni", "Sdri. Marshanda", "Sdri. Wenni", "Sdra. Yawar"]}
+                ]
+            }
+        };
+
+        let currentMonth = 'juni';
+        let currentViewMode = 'list';
+        let selectedDateIndex = 0;
+
+        function init() {
+            renderData();
+            switchMonth('juni');
+        }
+
+        function switchMonth(monthKey) {
+            currentMonth = monthKey;
+            
+            document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
+                const keys = ['juni', 'juli', 'agustus'];
+                if (keys[idx] === monthKey) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            document.getElementById('main-title').innerText = data[monthKey].title;
+            document.getElementById('sub-title').innerText = data[monthKey].church + " (" + data[monthKey].month + ")";
+
+            selectedDateIndex = 0;
+            renderDateTabs();
+            
+            document.querySelectorAll('.content-section').forEach(sec => {
+                if (sec.id === monthKey) sec.classList.add('active');
+                else sec.classList.remove('active');
+            });
+
+            handleSearch();
+        }
+
+        function setViewMode(mode) {
+            currentViewMode = mode;
+            document.getElementById('btn-list').classList.toggle('active', mode === 'list');
+            document.getElementById('btn-table').classList.toggle('active', mode === 'table');
+            
+            const dateTabs = document.getElementById('dateTabs');
+            if (mode === 'list') {
+                dateTabs.style.display = 'flex';
+            } else {
+                dateTabs.style.display = 'none';
+            }
+            
+            handleSearch();
+        }
+
+        function renderDateTabs() {
+            const container = document.getElementById('dateTabs');
+            container.innerHTML = '';
+            
+            if (currentViewMode !== 'list') return;
+
+            const headers = data[currentMonth].headers;
+            headers.forEach((h, index) => {
+                const parts = h.split('\n');
+                const dateStr = parts[0] || '';
+                const weekStr = parts[1] || '';
+                const timeStr = parts[2] || '';
+
+                const card = document.createElement('div');
+                card.className = `date-card ${index === selectedDateIndex ? 'active' : ''}`;
+                card.onclick = () => {
+                    selectedDateIndex = index;
+                    renderDateTabs();
+                    handleSearch();
+                };
+
+                card.innerHTML = `
+                    <div class="day">${dateStr}</div>
+                    <div style="font-size:0.8rem; font-weight:500; margin-top:2px;">${weekStr}</div>
+                    <div class="time">${timeStr}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderData() {
+            ['juni', 'juli', 'agustus'].forEach(mKey => {
+                const mData = data[mKey];
+                const section = document.getElementById(mKey);
+                
+                const tableResp = document.createElement('div');
+                tableResp.className = 'table-responsive';
+                tableResp.id = `table-resp-${mKey}`;
+                
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const trHead = document.createElement('tr');
+                const thPetugas = document.createElement('th');
+                thPetugas.innerText = 'Petugas';
+                trHead.appendChild(thPetugas);
+                
+                mData.headers.forEach(h => {
+                    const th = document.createElement('th');
+                    th.innerText = h;
+                    trHead.appendChild(th);
+                });
+                thead.appendChild(trHead);
+                table.appendChild(thead);
+                
+                const tbody = document.createElement('tbody');
+                
+                mData.rows.forEach(r => {
+                    const tr = document.createElement('tr');
+                    const tdCat = document.createElement('td');
+                    if (!r.is_subrow) {
+                        tdCat.innerText = r.category;
+                    } else {
+                        tdCat.innerText = ""; 
+                    }
+                    tr.appendChild(tdCat);
+                    
+                    r.values.forEach(v => {
+                        const td = document.createElement('td');
+                        td.innerText = v;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                
+                table.appendChild(tbody);
+                tableResp.appendChild(table);
+                section.appendChild(tableResp);
+                
+                const listContainer = document.createElement('div');
+                listContainer.className = 'schedule-list';
+                listContainer.id = `list-container-${mKey}`;
+                section.appendChild(listContainer);
+            });
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchBar').value.toLowerCase().trim();
+            const mData = data[currentMonth];
+            
+            const tableResp = document.getElementById(`table-resp-${currentMonth}`);
+            const listContainer = document.getElementById(`list-container-${currentMonth}`);
+            
+            if (currentViewMode === 'table') {
+                tableResp.style.display = 'block';
+                listContainer.style.display = 'none';
+                
+                const rows = tableResp.querySelectorAll('tbody tr');
+                rows.forEach(tr => {
+                    if (query === '') {
+                        tr.style.display = '';
+                    } else {
+                        let matches = false;
+                        tr.querySelectorAll('td').forEach(td => {
+                            if (td.innerText.toLowerCase().includes(query)) matches = true;
+                        });
+                        tr.style.display = matches ? '' : 'none';
+                    }
+                });
+            } else {
+                tableResp.style.display = 'none';
+                listContainer.style.display = 'flex';
+                listContainer.innerHTML = '';
+                
+                let aggregatedData = {};
+                
+                mData.rows.forEach(r => {
+                    const val = r.values[selectedDateIndex];
+                    if (val && val.trim() !== "") {
+                        if (!aggregatedData[r.category]) {
+                            aggregatedData[r.category] = [];
+                        }
+                        aggregatedData[r.category].push(val);
+                    }
+                });
+                
+                let count = 0;
+                for (const [category, names] of Object.entries(aggregatedData)) {
+                    const joinedNames = names.join(', ');
+                    const matchesQuery = query === '' || 
+                                         category.toLowerCase().includes(query) || 
+                                         joinedNames.toLowerCase().includes(query);
+                                         
+                    if (matchesQuery) {
+                        count++;
+                        const card = document.createElement('div');
+                        card.className = 'item-card';
+                        
+                        let namesHtml = names.map(n => `<div>${n}</div>`).join('');
+                        
+                        card.innerHTML = `
+                            <div class="item-role">${category}</div>
+                            <div class="item-names">${namesHtml}</div>
+                        `;
+                        listContainer.appendChild(card);
+                    }
+                }
+                
+                if (count === 0) {
+                    listContainer.innerHTML = '<div class="no-results">Tidak ada petugas ditemukan yang cocok dengan pencarian Anda.</div>';
+                }
+            }
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
